@@ -18,6 +18,7 @@ env = environ.Env(
     SECRET_KEY=(str, "dev-insecure-change-me"),
     ALLOWED_HOSTS=(list, ["*"]),
     CORS_ALLOWED_ORIGINS=(list, ["http://localhost:5173", "http://127.0.0.1:5173"]),
+    CORS_ALLOW_ALL_ORIGINS=(bool, False),
     DATABASE_URL=(str, "postgres://postgres:postgres@localhost:5432/payoutos"),
     REDIS_URL=(str, "redis://localhost:6379/0"),
     CELERY_TASK_ALWAYS_EAGER=(bool, False),
@@ -105,6 +106,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
+CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS")
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = (
     "accept",
