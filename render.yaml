@@ -1,0 +1,100 @@
+services:
+  - type: web
+    name: payoutos-api
+    env: python
+    region: singapore
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: python manage.py migrate && python manage.py seed && gunicorn payoutengine.wsgi --bind 0.0.0.0:$PORT --workers 3
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: "*"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: payoutos-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: payoutos-redis
+          property: connectionString
+
+  - type: worker
+    name: payoutos-worker
+    env: python
+    region: singapore
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A payoutengine worker --loglevel=info --concurrency=2
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: payoutos-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: payoutos-redis
+          property: connectionString
+
+  - type: worker
+    name: payoutos-beat
+    env: python
+    region: singapore
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A payoutengine beat --loglevel=info
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: payoutos-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: payoutos-redis
+          property: connectionString
+
+  - type: web
+    name: payoutos-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://payoutos-api.onrender.com
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://payoutos-api.onrender.com/api/:splat
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: redis
+    name: payoutos-redis
+    region: singapore
+    plan: free
+    ipAllowList: []
+
+databases:
+  - name: payoutos-db
+    databaseName: payoutos
+    region: singapore
+    plan: free
