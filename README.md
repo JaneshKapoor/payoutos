@@ -2,7 +2,7 @@
 
 A minimal but production-shaped clone of the payout engine that sits behind Playto Pay — the system that holds merchant balances in INR paise, accepts payout requests, and walks them through a state machine until they either settle or refund.
 
-> Built for the Playto Founding Engineer Challenge 2026.
+> Built for the Playto Founding Engineer Challenge 2026 by [Janesh Kapoor](https://github.com/JaneshKapoor).
 
 ## What this repo proves
 
