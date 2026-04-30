@@ -171,9 +171,13 @@ The repo is set up to deploy to **Render** or **Railway** with minimal config. T
 - Redis: managed instance.
 - Frontend: `npm run build` and serve as a static site (`frontend/dist`), with `VITE_API_URL` pointing at the API service URL.
 
-A `render.yaml` is included for the click-to-deploy path on Render.
+A `render.yaml` is included for the click-to-deploy path on Render. The actual deployment uses Railway (backend) + Vercel (frontend) because Render's free tier no longer supports background workers.
 
-Live URL: _add after deploy_.
+Live URLs:
+- **Dashboard:** https://payoutos.vercel.app
+- **API:** https://api-production-b04f.up.railway.app/api/v1/
+
+The dashboard has 3 seeded merchants — pick one from the top-right dropdown to view balance, ledger, and request payouts. Worker + beat are running on Railway, so payouts move through the state machine in real time.
 
 ---
 
