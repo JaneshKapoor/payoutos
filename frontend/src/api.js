@@ -2,7 +2,8 @@
 // X-Merchant-Id header as the demo "auth" — in a real product this
 // would be a session cookie or signed token.
 
-const BASE = "/api/v1";
+const API_HOST = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const BASE = `${API_HOST}/api/v1`;
 
 function uuidv4() {
   if (window.crypto && window.crypto.randomUUID) {
